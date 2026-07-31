@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">GymApp</string>
+    <string name="exercise_list_button_text">Lista Exercicios</string>
+    <string name="plan_list_button_text">Lista Planos</string>
+    <string name="plan_activity_main_text">Plan Activity</string>
+    <string name="exercise_activity_main_text">Exercise Activity</string>
+    <string name="text_add_button">+</string>
+    <string name="dialog_exercise_name">Exercise Name</string>
+    <string name="dialog_link_for_video_optional">Link for video (Optional)</string>
+    <string name="dialog_link_for_gif_optional">Link for GIF (Optional)</string>
+    <string name="dialog_notes_for_this_exercise_optional">Notes for this exercise (Optional)</string>
 </resources>

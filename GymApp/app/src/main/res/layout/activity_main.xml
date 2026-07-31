@@ -5,15 +5,39 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    >
 
-    <TextView
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/planListButton"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:backgroundTint="@color/blue_sapphire"
+        android:textColor="@color/white"
+        android:text="@string/plan_list_button_text"
+        app:layout_constraintBottom_toTopOf="@+id/exerciseListButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.5"
+
+        />
+
+    <Button
+        android:id="@+id/exerciseListButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="244dp"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/blue_sapphire"
+        android:text="@string/exercise_list_button_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintWidth_percent="0.5"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

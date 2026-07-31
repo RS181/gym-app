@@ -1,14 +1,20 @@
 package com.example.gymapp;
 
+import android.annotation.SuppressLint;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +24,7 @@ import com.example.gymapp.database.DatabaseHelper;
 import com.example.gymapp.models.Exercicio;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -31,15 +38,57 @@ public class ExerciseActivity  extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise);
 
-        // Run database initialization off the UI thread
-        executor.execute(() -> {
-            DatabaseHelper dbHelper = DatabaseHelper.getInstance(this);
-            // Calling getWritableDatabase() triggers onCreate() if the file doesn't exist
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-            Log.d("ExerciseActivity", "Database opened successfully. Path: " + db.getPath());
+        ListView exerciseListView = findViewById(R.id.listView);
 
-            // DatabaseHelper.dbCheck(db,"ExerciseActivity");
+        // Get exercises from DB
+        executor.execute( () ->  {
+            ExercicioDao exercicioDao = new ExercicioDao(this);
+            List<Exercicio> exercicioList = exercicioDao.getAll();
+
+            // Update UI on main thread
+            runOnUiThread( () -> {
+                ArrayAdapter<Exercicio> adapter = new ArrayAdapter<>(
+                        this,
+                        R.layout.item_exercicio,
+                        exercicioList
+                ) {
+                    @NonNull
+                    @Override
+                    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                        if (convertView == null) {
+                            convertView = LayoutInflater.from(getContext())
+                                    .inflate(R.layout.item_exercicio, parent, false);
+                        }
+
+
+                        TextView txtNome = convertView.findViewById(R.id.textNome);
+                        TextView txtVideo = convertView.findViewById(R.id.textVideo);
+                        TextView txtGif = convertView.findViewById(R.id.textGif);
+                        TextView txtNotas = convertView.findViewById(R.id.textNotas);
+
+                        Exercicio item = getItem(position);
+                        if (item != null) {
+                            txtNome.setText(item.getNome());
+                            txtVideo.setText("Vídeo: " + ((item.getLinkVideo().isEmpty()) ? "n/a" : item.getLinkVideo()));
+                            txtGif.setText("GIF: " + ((item.getLinkGif().isEmpty()) ? "n/a" : item.getLinkGif()));
+                            txtNotas.setText("Notas: " + ((item.getNotas().isEmpty()) ? "n/a" : item.getNotas()));
+                        }
+
+                        return convertView;
+                    }
+                };
+
+                exerciseListView.setAdapter(adapter);
+
+                exerciseListView.setOnItemClickListener((parent, view, position, id) -> {
+                    Exercicio selected = exercicioList.get(position);
+                    Toast.makeText(this, "Selected ID: " + selected.getId(), Toast.LENGTH_SHORT).show();
+                });
+
+            });
         });
+
+
 
 
 

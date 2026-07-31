@@ -1,5 +1,7 @@
 package com.example.gymapp.models;
 
+import androidx.annotation.NonNull;
+
 public class Exercicio {
     private int id;
     private String nome;
@@ -43,13 +45,26 @@ public class Exercicio {
     public String getNotas() {
         return notas;
     }
+    private String formatValue(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return "N/A";
+        }
+        return value.trim();
+    }
 
     @Override
     public String toString() {
-        return  "id=" + id +
+        return "Exercicio{" +
+                "id=" + id +
                 ", nome='" + nome + '\'' +
                 ", linkVideo='" + linkVideo + '\'' +
                 ", linkGif='" + linkGif + '\'' +
-                ", notas='" + notas + '\'' ;
+                ", notas='" + notas + '\'' +
+                '}';
+    }
+    public String getDetailsFormatted() {
+        return "linkVideo=" + formatValue(linkVideo)  +
+                "\nlinkGif=" + formatValue(linkGif) +
+                "\nnotas=" + formatValue(notas);
     }
 }

@@ -5,4 +5,6 @@
     <color name="blue_sapphire">#0F52BA</color>
     <color name="blue_bright">#0F52BA</color>
     <color name="green_add">#30C719</color>
+    <color name="link_blue">#0277BD</color>
+    <color name="notas_color">#CDFFFFFF</color>
 </resources>

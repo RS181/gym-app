@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/exerciseId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/white" />
+
+
+    <!-- Exercise Name -->
+    <TextView
+        android:id="@+id/textNome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/white" />
+
+    <!-- Video Link -->
+    <TextView
+        android:id="@+id/textVideo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="@color/link_blue"
+        android:layout_marginTop="4dp" />
+
+    <!-- GIF  -->
+    <ImageView
+        android:id="@+id/gifImage"
+        android:layout_width="200dp"
+        android:layout_height="150dp"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/default_text_exercise_gif"
+        />
+
+    <!-- Notes -->
+    <TextView
+        android:id="@+id/textNotas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="@color/notas_color"
+        android:layout_marginTop="2dp" />
+
+
+    <Button
+        android:id="@+id/editExercicio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/edit_button_text"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/blue_sapphire"
+        />
+
+    <Button
+        android:id="@+id/deleteExercicio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/bright_red"
+        android:text="@string/delete_button_text"
+        android:textColor="@color/white" />
+
+
+</LinearLayout>

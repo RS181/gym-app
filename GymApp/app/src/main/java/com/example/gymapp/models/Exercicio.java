@@ -45,6 +45,11 @@ public class Exercicio {
     public String getNotas() {
         return notas;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     private String formatValue(String value) {
         if (value == null || value.trim().isEmpty()) {
             return "N/A";
@@ -67,4 +72,5 @@ public class Exercicio {
                 "\nlinkGif=" + formatValue(linkGif) +
                 "\nnotas=" + formatValue(notas);
     }
+
 }

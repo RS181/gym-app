@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -64,6 +65,25 @@ public class ExercicioDao {
         return list;
     }
 
+
+    // GET ONE
+    public Exercicio getOne(int id){
+        Exercicio exercicio = null;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT id, nome, link_video, link_gif, notas FROM exercicio WHERE id = ?";
+        String[] selectionArgs = new String[]{ String.valueOf(id) };
+
+        Cursor cursor = db.rawQuery(query,selectionArgs);
+        if(cursor.moveToFirst()){
+            String nome = cursor.getString(1);
+            String linkVideo = cursor.getString(2);
+            String linkGif = cursor.getString(3);
+            String notas = cursor.getString(4);
+            exercicio = new Exercicio(id,nome,linkGif,linkVideo,notas);
+        }
+        return exercicio;
+    }
+
     // READ EXERCISES FOR A SPECIFIC PLAN (JOIN query)
     public List<Exercicio> getExerciciosByPlanoId(int planoId) {
         List<Exercicio> list = new ArrayList<>();
@@ -91,16 +111,21 @@ public class ExercicioDao {
 
 
     // UPDATE
-    public int update(Exercicio exercicio) {
+    public void update(Exercicio exercicio) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
 
-        values.put("nome",exercicio.getNome());
-        values.put("link_video",exercicio.getLinkVideo());
-        values.put("link_gif",exercicio.getLinkGif());
-        values.put("notas",exercicio.getNotas());
-
-        return db.update(TABLE_NAME, values, "id = ?", new String[]{String.valueOf(exercicio.getId())});
+        String sql = "UPDATE " + TABLE_NAME + " SET nome = ?, link_video = ?, link_gif = ?, notas = ? WHERE id = ?";
+        try {
+            db.execSQL(sql, new Object[]{
+                    exercicio.getNome(),
+                    exercicio.getLinkVideo(),
+                    exercicio.getLinkGif(),
+                    exercicio.getNotas(),
+                    exercicio.getId()
+            });
+        } catch (Exception e) {
+            Log.e("ExercicioDao", "Error in ExercicioDao -> update : " + e.getMessage());
+        }
     }
 
     // DELETE

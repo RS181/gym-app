@@ -59,13 +59,7 @@ public class Exercicio {
 
     @Override
     public String toString() {
-        return "Exercicio{" +
-                "id=" + id +
-                ", nome='" + nome + '\'' +
-                ", linkVideo='" + linkVideo + '\'' +
-                ", linkGif='" + linkGif + '\'' +
-                ", notas='" + notas + '\'' +
-                '}';
+        return nome;
     }
     public String getDetailsFormatted() {
         return "linkVideo=" + formatValue(linkVideo)  +

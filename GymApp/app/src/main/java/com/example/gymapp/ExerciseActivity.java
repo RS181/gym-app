@@ -18,223 +18,239 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 
 import com.bumptech.glide.Glide;
 import com.example.gymapp.dao.ExercicioDao;
 import com.example.gymapp.models.Exercicio;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ExerciseActivity  extends AppCompatActivity {
+public class ExerciseActivity extends AppCompatActivity {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ExercicioDao exercicioDao;
 
+    // Lists to manage search filtering
+    private final List<Exercicio> fullList = new ArrayList<>();
+    private final List<Exercicio> displayedList = new ArrayList<>();
+
+    private ArrayAdapter<Exercicio> adapter;
+    private SearchView searchView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise);
 
+        exercicioDao = new ExercicioDao(this);
+
         ListView exerciseListView = findViewById(R.id.listView);
+        searchView = findViewById(R.id.searchView);
+        Button addExerciseButton = findViewById(R.id.button);
 
-        // Get exercises from DB
-        executor.execute( () ->  {
-            ExercicioDao exercicioDao = new ExercicioDao(this);
-            List<Exercicio> exercicioList = exercicioDao.getAll();
+        // 1. Setup Adapter
+        adapter = new ArrayAdapter<Exercicio>(
+                this,
+                R.layout.item_exercicio,
+                displayedList
+        ) {
+            @SuppressLint("SetTextI18n")
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                if (convertView == null) {
+                    convertView = LayoutInflater.from(getContext())
+                            .inflate(R.layout.item_exercicio, parent, false);
+                }
 
-            // Update UI on main thread
-            runOnUiThread( () -> {
-                ArrayAdapter<Exercicio> adapter = new ArrayAdapter<>(
-                        this,
-                        R.layout.item_exercicio,
-                        exercicioList
-                ) {
-                    @SuppressLint("SetTextI18n")
-                    @NonNull
-                    @Override
-                    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                        if (convertView == null) {
-                            convertView = LayoutInflater.from(getContext())
-                                    .inflate(R.layout.item_exercicio, parent, false);
-                        }
+                TextView eId = convertView.findViewById(R.id.exerciseId);
+                TextView txtNome = convertView.findViewById(R.id.textNome);
+                TextView txtVideo = convertView.findViewById(R.id.textVideo);
+                ImageView imgGif = convertView.findViewById(R.id.gifImage);
+                TextView txtNotas = convertView.findViewById(R.id.textNotas);
+                Button editButton = convertView.findViewById(R.id.editExercicio);
+                Button deleteButton = convertView.findViewById(R.id.deleteExercicio);
 
-                        TextView eId = convertView.findViewById(R.id.exerciseId);
-                        TextView txtNome = convertView.findViewById(R.id.textNome);
-                        TextView txtVideo = convertView.findViewById(R.id.textVideo);
-                        ImageView imgGif = convertView.findViewById(R.id.gifImage);
-                        TextView txtNotas = convertView.findViewById(R.id.textNotas);
-                        Button editButton = convertView.findViewById(R.id.editExercicio);
-                        Button deleteButton = convertView.findViewById(R.id.deleteExercicio);
+                Exercicio item = getItem(position);
 
-                        editButton.setOnClickListener( view ->{
-                            Exercicio selected = exercicioList.get(position);
-                            Toast.makeText(this.getContext(), "Editing exercise with ID: " + selected.getId(), Toast.LENGTH_SHORT).show();
-                        });
+                if (item != null) {
+                    String gifUrl = item.getLinkGif() == null || item.getLinkGif().isEmpty() ? "n/a" : item.getLinkGif();
 
-                        Exercicio item = getItem(position);
+                    eId.setText("Id: " + item.getId());
+                    txtNome.setText(item.getNome());
+                    txtVideo.setText("Vídeo: " + (item.getLinkVideo().isEmpty() ? "n/a" : item.getLinkVideo()));
+                    txtNotas.setText("Notas: " + (item.getNotas().isEmpty() ? "n/a" : item.getNotas()));
 
-                        String gifUrl = (item.getLinkGif().isEmpty()) ? "n/a" : item.getLinkGif();
-
-                        if (item != null) {
-                            // Load available info from exercise
-                            eId.setText(String.valueOf("Id: " + item.getId()));
-                            txtNome.setText(item.getNome());
-                            txtVideo.setText("Vídeo: " + ((item.getLinkVideo().isEmpty()) ? "n/a" : item.getLinkVideo()));
-                            txtNotas.setText("Notas: " + ((item.getNotas().isEmpty()) ? "n/a" : item.getNotas()));
-
-                            if (gifUrl != null && !gifUrl.trim().isEmpty() && !gifUrl.equalsIgnoreCase("n/a")) {
-                                imgGif.setVisibility(View.VISIBLE);
-
-                                // GLIDE: Efficient memory-managed GIF loading
-                                Glide.with(getContext())
-                                        .asGif()                                    // Ensures it renders animated GIFs
-                                        .load(gifUrl)                               // Accepts URL string or local asset path
-                                        .override(400, 300)                         // Downscales GIF in memory to fit view size
-                                        .placeholder(android.R.drawable.stat_sys_download) // Shown while loading
-                                        .error(android.R.drawable.ic_dialog_alert)         // Shown if link fails or is invalid
-                                        .into(imgGif);
-                            } else {
-                                // Hide the view if no valid GIF exists to save screen space
-                                imgGif.setVisibility(View.GONE);
-                            }
-
-                            // Edit behavior
-                            editButton.setOnClickListener(v -> {
-                                Toast.makeText(v.getContext(), "Editing exercise with ID: " + item.getId(), Toast.LENGTH_SHORT).show();
-                                createExerciseModal("Edit", Optional.of(item.getId()));
-                            });
-
-                            // Add behavior
-                            deleteButton.setOnClickListener(v -> {
-                                Toast.makeText(v.getContext(), "Deleting exercise with ID: " + item.getId(), Toast.LENGTH_SHORT).show();
-                                exercicioDao.delete(item.getId());
-                            });
-
-
-
-                        }
-
-                        return convertView;
+                    if (!gifUrl.trim().isEmpty() && !gifUrl.equalsIgnoreCase("n/a")) {
+                        imgGif.setVisibility(View.VISIBLE);
+                        Glide.with(getContext())
+                                .asGif()
+                                .load(gifUrl)
+                                .override(400, 300)
+                                .placeholder(android.R.drawable.stat_sys_download)
+                                .error(android.R.drawable.ic_dialog_alert)
+                                .into(imgGif);
+                    } else {
+                        imgGif.setVisibility(View.GONE);
                     }
 
+                    // Edit Button Action
+                    editButton.setOnClickListener(v -> {
+                        Toast.makeText(v.getContext(), "Editing exercise with ID: " + item.getId(), Toast.LENGTH_SHORT).show();
+                        createExerciseModal("Edit", Optional.of(item.getId()));
+                    });
 
-                };
+                    // Delete Button Action
+                    deleteButton.setOnClickListener(v -> {
+                        executor.execute(() -> {
+                            exercicioDao.delete(item.getId());
+                            loadExercisesFromDb(); // Refresh UI after delete
+                        });
+                        Toast.makeText(v.getContext(), "Deleted exercise ID: " + item.getId(), Toast.LENGTH_SHORT).show();
+                    });
+                }
 
-                exerciseListView.setAdapter(adapter);
+                return convertView;
+            }
+        };
 
+        exerciseListView.setAdapter(adapter);
 
-            });
-        });
-
-
-        /* Add Exercise button behavior */
-        Button addExerciseButton = findViewById(R.id.button);
-        addExerciseButton.setOnClickListener(new View.OnClickListener() {
+        // 2. Setup SearchView Listener
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Adding new Exercise", Toast.LENGTH_SHORT).show();
-                createExerciseModal("Add", Optional.empty());
+            public boolean onQueryTextSubmit(String query) {
+                filterExercises(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterExercises(newText);
+                return true;
             }
         });
 
+        // 3. Setup Add Button
+        addExerciseButton.setOnClickListener(v -> {
+            Toast.makeText(getApplicationContext(), "Adding new Exercise", Toast.LENGTH_SHORT).show();
+            createExerciseModal("Add", Optional.empty());
+        });
+
+        // 4. Initial load of exercises
+        loadExercisesFromDb();
     }
 
+    /**
+     * Reads all exercises from the DB on a background thread and updates the UI lists.
+     */
+    private void loadExercisesFromDb() {
+        executor.execute(() -> {
+            List<Exercicio> listFromDb = exercicioDao.getAll();
 
+            runOnUiThread(() -> {
+                fullList.clear();
+                fullList.addAll(listFromDb);
+                // Apply current search query if user typed something
+                filterExercises(searchView.getQuery().toString());
+            });
+        });
+    }
 
-    private void createExerciseModal(String operation, Optional<Integer> id){
-        // Get id (optional)
-        int editId = 0;
-        if(operation.equals("Edit"))
-            editId = id.orElseThrow();
-        /* Create modal screen */
+    /**
+     * Filters fullList based on exercise name and updates the displayedList.
+     */
+    private void filterExercises(String query) {
+        displayedList.clear();
 
-        // Instantiate and set up the dialog constructor
+        if (query == null || query.trim().isEmpty()) {
+            displayedList.addAll(fullList);
+        } else {
+            String filterPattern = query.toLowerCase().trim();
+            for (Exercicio item : fullList) {
+                if (item.getNome().toLowerCase().contains(filterPattern)) {
+                    displayedList.add(item);
+                }
+            }
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    private void createExerciseModal(String operation, Optional<Integer> id) {
+        int editId = operation.equals("Edit") ? id.orElseThrow() : 0;
+
         AlertDialog.Builder builder = new AlertDialog.Builder(ExerciseActivity.this);
         builder.setTitle(operation + " exercise modal");
         builder.setMessage("Fill in exercise details ");
         builder.setCancelable(false);
 
-
-        // Inflate custom XML
         LayoutInflater inflater = ExerciseActivity.this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_add_exercise,null);
+        View dialogView = inflater.inflate(R.layout.dialog_add_exercise, null);
         builder.setView(dialogView);
         builder.setPositiveButton("Confirm", null);
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
 
-
-        // Get the elements from dialog
         final EditText dialogExerciseName = dialogView.findViewById(R.id.dialogExerciseName);
         final EditText dialogExerciseVideo = dialogView.findViewById(R.id.dialogExerciseVideo);
         final EditText dialogExerciseGIF = dialogView.findViewById(R.id.dialogExerciseGIF);
         final EditText dialogExerciseNotes = dialogView.findViewById(R.id.dialogExerciseNotes);
 
-
-
-
-        if(operation.equals("Edit")){
-            ExercicioDao exercicioDao = new ExercicioDao(ExerciseActivity.this);
-            try {
-                Exercicio e = exercicioDao.getOne(editId);
-                dialogExerciseName.setText(e.getNome());
-                dialogExerciseVideo.setText(e.getLinkVideo());
-                dialogExerciseGIF.setText(e.getLinkGif());
-                dialogExerciseNotes.setText(e.getNotas());
-            } catch (Exception e) {
-                Log.e("ExerciseActivity","Error occured in ExerciseActivity -> createExerciseModal "  + e.getMessage());
-            }
-
+        if (operation.equals("Edit")) {
+            executor.execute(() -> {
+                try {
+                    Exercicio e = exercicioDao.getOne(editId);
+                    runOnUiThread(() -> {
+                        dialogExerciseName.setText(e.getNome());
+                        dialogExerciseVideo.setText(e.getLinkVideo());
+                        dialogExerciseGIF.setText(e.getLinkGif());
+                        dialogExerciseNotes.setText(e.getNotas());
+                    });
+                } catch (Exception e) {
+                    Log.e("ExerciseActivity", "Error occurred in createExerciseModal: " + e.getMessage());
+                }
+            });
         }
 
         AlertDialog dialog = builder.create();
         dialog.show();
 
-        int finalEditId = editId;
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String name = dialogExerciseName.getText().toString().trim();
+            String video = dialogExerciseVideo.getText().toString().trim();
+            String gif = dialogExerciseGIF.getText().toString().trim();
+            String notes = dialogExerciseNotes.getText().toString().trim();
 
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String name = dialogExerciseName.getText().toString().trim();
-                String video = dialogExerciseVideo.getText().toString().trim();
-                String gif = dialogExerciseGIF.getText().toString().trim();
-                String notes = dialogExerciseNotes.getText().toString().trim();
+            if (name.isEmpty()) {
+                dialogExerciseName.setError("Exercise name is required");
+                return;
+            } else if (!video.isEmpty() && !Validator.check_URL(video)) {
+                dialogExerciseVideo.setError("Invalid URL for video");
+                return;
+            } else if (!gif.isEmpty() && !Validator.check_URL(gif)) {
+                dialogExerciseGIF.setError("Invalid URL for GIF");
+                return;
+            }
 
-                if(name.isEmpty()) {
-                    dialogExerciseName.setError("Exercise name is required");
-                    return;
-                }
-                else if (!video.isEmpty()){
-                    if (!Validator.check_URL(video)) {
-                        dialogExerciseVideo.setError("Invalid URL for video");
-                        return;
-                    }
-                }
-                else if(!gif.isEmpty()){
-                    if(!Validator.check_URL(gif)) {
-                        dialogExerciseNotes.setError("Invalid URL for GIF");
-                        return;
-                    }
-                }
+            Exercicio e = new Exercicio(name, gif, video, notes);
 
-
-                Exercicio e = new Exercicio(name,gif,video,notes);
-                ExercicioDao exercicioDao = new ExercicioDao(ExerciseActivity.this);
-
-                if(operation.equals("Add"))
+            executor.execute(() -> {
+                if (operation.equals("Add")) {
                     exercicioDao.addExercise(e);
-                else if (operation.equals("Edit")){
-                    e.setId(finalEditId);
+                } else if (operation.equals("Edit")) {
+                    e.setId(editId);
                     exercicioDao.update(e);
                 }
 
-                dialog.dismiss(); // Fecha o diálogo apenas agora
-            }
+                // Refresh list on screen after DB write
+                loadExercisesFromDb();
+            });
+
+            dialog.dismiss();
         });
     }
 }
-
-

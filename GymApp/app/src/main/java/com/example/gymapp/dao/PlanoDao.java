@@ -35,17 +35,19 @@ public class PlanoDao {
     public  List<Plano> getAll(){
         List<Plano> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("Select id, nome, data_criacao FROM plano ORDER BY id DESC",null);
-        if(cursor.moveToFirst()){
-            while (cursor.moveToNext()){
+        String query = "SELECT id, nome, data_criacao FROM plano ORDER BY id DESC";
+
+        try (Cursor cursor = db.rawQuery(query, null)) {
+            while (cursor.moveToNext()) {
                 int id = cursor.getInt(0);
                 String nome = cursor.getString(1);
                 String data_criacao = cursor.getString(2);
-                list.add(new Plano(id,nome,data_criacao));
-            }
-        }
 
-        cursor.close();
+                list.add(new Plano(id, nome, data_criacao));
+            }
+        } catch (Exception e) {
+            Log.e("PlanoDao", "Error fetching all plans: " + e.getMessage());
+        }
         return list;
     }
 

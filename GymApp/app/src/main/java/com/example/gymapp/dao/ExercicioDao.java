@@ -42,7 +42,7 @@ public class ExercicioDao {
         values.put("plano_id", planoId);
         values.put("exercicio_id", exercicioId);
 
-        return db.insert("plano_exercicio", null, values);
+        return db.insertOrThrow("plano_exercicio", null, values);
     }
 
 
@@ -50,18 +50,22 @@ public class ExercicioDao {
     public List<Exercicio> getAll(){
         List<Exercicio> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("Select id, nome, link_video, link_gif, notas  FROM exercicio ORDER BY id DESC",null);
-        if(cursor.moveToFirst()){
-            while (cursor.moveToNext()){
+
+        String query = "SELECT id, nome, link_video, link_gif, notas FROM exercicio ORDER BY id DESC";
+
+        try (Cursor cursor = db.rawQuery(query, null)) {
+            while (cursor.moveToNext()) {
                 int id = cursor.getInt(0);
                 String nome = cursor.getString(1);
                 String linkVideo = cursor.getString(2);
                 String linkGif = cursor.getString(3);
                 String notas = cursor.getString(4);
-                list.add(new Exercicio(id,nome,linkGif,linkVideo,notas));
+
+                list.add(new Exercicio(id, nome, linkGif, linkVideo, notas));
             }
+        } catch (Exception e) {
+            Log.e("ExercicioDao", "Error fetching all exercises: " + e.getMessage());
         }
-        cursor.close();
         return list;
     }
 
@@ -93,8 +97,8 @@ public class ExercicioDao {
                 "JOIN plano_exercicio pe ON e.id = pe.exercicio_id " +
                 "WHERE pe.plano_id = ?";
 
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(planoId)});
-        if (cursor.moveToFirst()) {
+        // Using try-with-resources auto-closes the cursor safely
+        try (Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(planoId)})) {
             while (cursor.moveToNext()) {
                 int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
                 String nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"));
@@ -104,8 +108,9 @@ public class ExercicioDao {
 
                 list.add(new Exercicio(id, nome, video, gif, notas));
             }
+        } catch (Exception e) {
+            Log.e("ExercicioDao", "Error fetching exercises for plan " + planoId + ": " + e.getMessage());
         }
-        cursor.close();
         return list;
     }
 

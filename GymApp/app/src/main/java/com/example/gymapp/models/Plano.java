@@ -1,5 +1,12 @@
 package com.example.gymapp.models;
 
+import android.os.Build;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+
+import java.time.LocalDate;
+
 public class Plano {
     private int id;
     private String nome;
@@ -14,10 +21,10 @@ public class Plano {
     }
 
     // Constructor to add a new Plano to the DB
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public Plano(String nome) {
-        this.id = id;
         this.nome = nome.trim();
-        this.dataCriacao = dataCriacao;
+        this.dataCriacao = LocalDate.now().toString();
     }
 
     public int getId() {
@@ -30,6 +37,15 @@ public class Plano {
 
     public String getDataCriacao() {
         return dataCriacao;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return nome;
     }
 }
 

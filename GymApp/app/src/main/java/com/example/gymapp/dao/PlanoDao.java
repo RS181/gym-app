@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.example.gymapp.database.DatabaseHelper;
+import com.example.gymapp.models.Exercicio;
 import com.example.gymapp.models.Plano;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class PlanoDao {
     }
 
     // READ ALL
-    public List<Plano> getAll(){
+    public  List<Plano> getAll(){
         List<Plano> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("Select id, nome, data_criacao FROM plano ORDER BY id DESC",null);
@@ -46,6 +47,22 @@ public class PlanoDao {
 
         cursor.close();
         return list;
+    }
+
+    // GET ONE
+    public Plano getOne(int id){
+        Plano plano = null;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT id, nome, data_criacao FROM plano WHERE id = ?";
+        String[] selectionArgs = new String[]{ String.valueOf(id) };
+
+        Cursor cursor = db.rawQuery(query,selectionArgs);
+        if(cursor.moveToFirst()){
+            String nome = cursor.getString(1);
+            String data_criacao = cursor.getString(2);
+            plano = new Plano(id,nome,data_criacao);
+        }
+        return plano;
     }
 
 

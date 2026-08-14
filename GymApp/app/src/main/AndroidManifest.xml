@@ -33,6 +33,11 @@
             android:name=".ExerciseActivity"
             android:exported="false"
             android:label="Exercise Screen" />
+
+        <activity
+            android:name=".AssociateExerciseToPlanActivity"
+            android:exported="false"
+            android:label="Associate Screen" />
     </application>
 
 </manifest>

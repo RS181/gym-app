@@ -2,6 +2,7 @@
     <string name="app_name">GymApp</string>
     <string name="exercise_list_button_text">Lista Exercicios</string>
     <string name="plan_list_button_text">Lista Planos</string>
+    <string name="associate_button_text">Associar Exercicios a um Plano</string>
     <string name="plan_activity_main_text">Plan Activity</string>
     <string name="exercise_activity_main_text">Exercise Activity</string>
     <string name="text_add_button">+</string>
@@ -13,6 +14,8 @@
     <string name="edit_button_text">Edit</string>
     <string name="delete_button_text">Delete</string>
     <string name="dialog_plan_name">Plan Name</string>
+    <string name="associate_activity_main_text">Associate Activity</string>
+
 
 
 </resources>

@@ -71,6 +71,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /* AssociateExerciseToPlanActivity button*/
+        Button associateButton = findViewById(R.id.associateButton);
+        associateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Going to Associate activity", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this,AssociateExerciseToPlanActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
 

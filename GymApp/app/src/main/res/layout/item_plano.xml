@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/planId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/white" />
+
+
+    <!-- Plano Name -->
+    <TextView
+        android:id="@+id/planName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/white" />
+
+
+
+
+    <!-- Notes -->
+    <TextView
+        android:id="@+id/dataCriacao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/notas_color"
+        android:layout_marginTop="2dp" />
+
+
+    <Button
+        android:id="@+id/editPlan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/edit_button_text"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/blue_sapphire"
+        />
+
+    <Button
+        android:id="@+id/deletePlan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/bright_red"
+        android:text="@string/delete_button_text"
+        android:textColor="@color/white" />
+
+
+</LinearLayout>

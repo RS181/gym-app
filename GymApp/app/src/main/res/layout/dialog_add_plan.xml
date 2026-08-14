@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    >
+
+    <EditText
+        android:id="@+id/dialogPlanName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/dialog_plan_name"
+        android:importantForAutofill="no"
+        android:inputType="textCapWords"
+        android:layout_marginBottom="12dp" />
+
+    <EditText
+        android:id="@+id/dialogDataCriacao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:cursorVisible="false"
+        android:layout_marginBottom="12dp"
+        android:visibility="gone"
+        />
+
+
+</LinearLayout>

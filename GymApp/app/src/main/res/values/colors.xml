@@ -2,10 +2,13 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="white_v2">#DCDBB7</color>
     <color name="blue_sapphire">#0F52BA</color>
     <color name="blue_bright">#0F52BA</color>
     <color name="green_add">#30C719</color>
     <color name="link_blue">#0277BD</color>
     <color name="notas_color">#CDFFFFFF</color>
     <color name="bright_red">#CDB40909</color>
+    <color name="darker_grey">#CD3E3939</color>
+
 </resources>

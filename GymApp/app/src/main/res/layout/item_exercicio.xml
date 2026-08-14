@@ -70,5 +70,12 @@
         android:text="@string/delete_button_text"
         android:textColor="@color/white" />
 
+    <CheckBox
+        android:id="@+id/checkboxExercise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:visibility="gone"/>
 
 </LinearLayout>

@@ -45,7 +45,7 @@ public class Plano {
 
     @Override
     public String toString() {
-        return nome;
+        return "ID: " + id + " - " + nome;
     }
 }
 

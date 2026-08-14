@@ -37,7 +37,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:background="@android:color/white"
+        android:background="@color/darker_grey"
         app:iconifiedByDefault="false"
         app:queryHint="Search exercises..."
         app:layout_constraintEnd_toEndOf="parent"

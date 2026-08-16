@@ -13,9 +13,11 @@
     <string name="default_text_exercise_gif">Exercise GIF</string>
     <string name="edit_button_text">Edit</string>
     <string name="delete_button_text">Delete</string>
+    <string name="see_exercise_button_text">See exercises in this  plan</string>
     <string name="dialog_plan_name">Plan Name</string>
     <string name="associate_activity_main_text">Associate Activity</string>
     <string name="add_exercises_to_workout_plan_button_text">Add Exercises to work out Plan</string>
+    <string name="plan_exercises">Plan Exercises</string>
 
 
 </resources>

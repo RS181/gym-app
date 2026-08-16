@@ -1,6 +1,7 @@
 package com.example.gymapp;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
@@ -86,7 +87,7 @@ public class PlanActivity extends  AppCompatActivity {
                 TextView dataCriacao = convertView.findViewById(R.id.dataCriacao);
                 Button editButton = convertView.findViewById(R.id.editPlan);
                 Button deleteButton = convertView.findViewById(R.id.deletePlan);
-
+                Button seeExercisesButton = convertView.findViewById(R.id.seeExercises);
                 Plano item = getItem(position);
 
                 if (item !=null){
@@ -106,8 +107,18 @@ public class PlanActivity extends  AppCompatActivity {
                             planoDao.delete(item.getId());
                             loadPlanosFromDb(); // Refresh UI after delete
                         });
-                        Toast.makeText(v.getContext(), "Deleted exercise ID: " + item.getId(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(v.getContext(), "Deleted plan ID: " + item.getId(), Toast.LENGTH_SHORT).show();
                     });
+
+                    // See Exercises for this plan
+                    seeExercisesButton.setOnClickListener( v -> {
+                        Toast.makeText(v.getContext(), "Checking exercises associated with plan ID: " + item.getId(), Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(v.getContext(), PlanExercisesActivity.class);
+                        intent.putExtra("PLANO_ID", item.getId());
+                        intent.putExtra("PLANO_NAME", item.getNome());
+                        v.getContext().startActivity(intent);
+                    });
+
                 }
 
                 return convertView;
@@ -136,6 +147,8 @@ public class PlanActivity extends  AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Creating a new workout Plan", Toast.LENGTH_SHORT).show();
             createPlanModal("Add", Optional.empty());
         });
+
+
 
         // 4. Initial load of plan
         loadPlanosFromDb();
